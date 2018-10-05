@@ -1,0 +1,36 @@
+{% extends 'admin/header_admin.html' %}
+{% block body %}
+<body>
+	<div class="container">
+		<br>
+		<br>
+		<h4>Register</h4>
+		<br>
+		{% from "admin/form_helper.html" import render_field  %}
+		<form method="POST" action="/admin/update_db/">
+			<div class="row">
+				<div class="col-sm">
+					<dl>
+						{{ render_field ( form.product_name )}}
+						{{ render_field ( form.description  )}}
+						{{ render_field ( form.display   	)}}
+						{{ render_field ( form.brand        )}}
+					</dl>
+				</div>
+				<div class="col-sm">
+					<dl>
+						{{ render_field ( form.amount   )}}
+						{{ render_field ( form.procesor )}}
+						{{ render_field ( form.os 		)}}
+						{{ render_field ( form.price    )}}
+					</dl>
+				</div>
+				<p><input class="btn btn-default" type="submit" value="Add Product"></p>
+			</div>
+		</form>
+		{% if error %}
+			<p class="error"><strong>Error:</strong>{{ error }}</p>
+		{% endif %}
+	</div>
+</body>
+{% endblock %}

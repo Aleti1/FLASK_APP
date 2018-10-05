@@ -1,0 +1,21 @@
+{% extends "header.html" %} 
+{% block body %}
+
+<body>
+    <div class="container">
+        <br>
+        <h3>Enter your email address</h3>
+        <br>
+        <form action="" class="form-inline" method="POST">
+            <input type="text" class="form-control" placeholder="Email" name="email" value="{{request.form.email}}">
+            <input class="btn btn-default" type="submit" value="Next">
+        </form>
+        <h5>You don't have an account? Don't worry!</h5>
+        <h5>You can create one in next step.</h5>
+        <br>
+        {{ error  }}
+    </div>
+</body>
+
+
+{% endblock%}

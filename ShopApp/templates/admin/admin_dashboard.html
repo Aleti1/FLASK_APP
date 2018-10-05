@@ -1,0 +1,13 @@
+{% extends 'admin/header_admin.html' %}
+{% block body %}
+<div class="btn-group">
+    <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Admin Options
+    </button>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" href="/admin/update_db/">Add Products</a>
+        <a class="dropdown-item" href="/admin/delete_db/">Delete Products</a>
+        <a class="dropdown-item" href="/admin/deals_db/">Generate Deals</a>
+    </div>
+  </div>
+{% endblock %}

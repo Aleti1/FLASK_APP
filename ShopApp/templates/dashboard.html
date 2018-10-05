@@ -1,0 +1,98 @@
+{% extends 'header.html' %}
+{% block body %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/dashboard.css')}}">
+<br><br>
+<div class="row">
+    <div class="col-sm-2" style="background-color:lavender;">   <!-- LEFT COLUMN   -->
+        <form action="" class="filters" method="POST"> 
+            <div class="checkbox" >
+                {% for row in categ_filtre %}
+                    <h3>{{ row[0] }}</h3> 
+                    <div class="checkbox_filter">
+                        <label id="filter_options">          
+                            {% for d in filtre %}
+                                {% if row[1] == d[1]: %}
+                                <div id="item">
+                                    <input type="checkbox" {{ 'checked' if request.args.get(row[0]|replace( ' ', '-' ))==d[0] else "" }} 
+                                    data-brand="{{ row[0]|replace( ' ', '-' ) }}"  value="{{ d[0] }}" onclick="javascript:set_filter( this )">
+                                        <label  value="{{ d[2] }}">{{ d[0] }}</label>
+                                </div>
+                                {% endif %}
+                            {% endfor %}           
+                        </label>
+                    </div>
+                {% endfor %}   
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-10" style="background-color:lavenderblush;">  <!-- MAIN COLUMN   -->
+
+        {% for row in products %}
+        <div class="col-md-2 column productbox">
+                <div class="producttitle">{{ row[1] }}</div>
+                <p>Description:&nbsp;&nbsp;&nbsp;{{ row[2] }}</p>
+                <br>
+                
+                <br>
+                
+                <div class="productprice"><div class="pull-right">
+                    <div class="pricetext">{{ row[4] }} $</div>
+                    <button type="button" class="btn btn-danger btn-sm" 
+                        data-price="{{ row[4] }}" 
+                        data-name="{{ row[1] }}" 
+                        data-idProduct="{{ row[0] }}"
+                        onclick="javascript:add_to_cart(this)">Add to Cart</button></div>
+                    </div>
+                <div>Products in inventory: {{ row[3] }}</div>
+        </div>
+        {% endfor %} 
+
+
+        
+    </div>
+</div>
+<script>
+
+    
+    
+
+    function set_filter( action ){
+
+            if( $( action ).data( 'brand' ).length > 0 && $( action ).val().length > 0 ) {
+                var url      = window.location.href,
+                    newGet   = {},
+                    finalGet = [],
+                    brand    = $( action ).data( 'brand' ),
+                    value    = $(action).val();
+                url = url.split( '?' );
+                if( url.length > 1 ) {
+                    var get = url[1].split( '&' );
+                    $.each( get, function( k ) {
+                        let splitGet = get[k].split( '=' );
+                        newGet[splitGet[0]] = splitGet[1];
+                    } );
+                }
+                if( brand in newGet ){
+                    delete newGet[brand];
+                } else {
+                    newGet[brand] = value;
+                }
+                $.each( newGet, function( k, v ){
+                    finalGet.push( k +'='+v );
+                } );
+                var newUrl = finalGet.length > 0 ? url[0] + '?' + finalGet.join( '&' )  : url[0];
+                window.location.href = newUrl;
+            }
+
+    }
+    
+    function add_to_cart(action){
+        var idProduct = Number($(action).attr("data-idProduct"));
+        var name = $(action).attr("data-name");
+        var price = Number($(action).attr("data-price"));
+        JS_shoppingCart.addItemToCart(idProduct, name, price, 1);
+    }
+
+</script>
+
+{% endblock %}
