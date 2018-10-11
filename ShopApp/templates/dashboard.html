@@ -63,7 +63,7 @@
                     newGet   = {},
                     finalGet = [],
                     brand    = $( action ).data( 'brand' ),
-                    value    = $(action).val();
+                    value    = $( action ).val();
                 url = url.split( '?' );
                 if( url.length > 1 ) {
                     var get = url[1].split( '&' );
@@ -87,10 +87,11 @@
     }
     
     function add_to_cart(action){
-        var idProduct = Number($(action).attr("data-idProduct"));
+        var idProduct = Number($(action).attr("data-idproduct"));
         var name = $(action).attr("data-name");
         var price = Number($(action).attr("data-price"));
         JS_shoppingCart.addItemToCart(idProduct, name, price, 1);
+        $( "#cart-butt" ).html( JS_shoppingCart.countCart());
     }
 
 </script>

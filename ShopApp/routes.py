@@ -65,7 +65,6 @@ def passwordstep(email_addr):
             data = cursor.execute(""" SELECT * FROM users WHERE email = '{}' """
                                     .format( email_addr ))
             data = cursor.fetchone()
-            print(data)
             if data:
                 if sha256_crypt.verify( request.form["password"], data["password"] ):
                     session['logged_in'] = True
@@ -85,36 +84,51 @@ def passwordstep(email_addr):
 def checkout():
     form = Checkout(request.form)
     username = session['username']
-     
-    try:
-        if request.method == "POST" and form.validate():
-            fullname = form.fullname.data
-            fulladdress = form.fulladdress.data
-            phone = form.phone.data
-            city = form.city.data
-            cursor, connect = connection()           
-            data = cursor.execute("""SELECT * FROM users WHERE username = '{}'""".format( username )) 
-            data = cursor.fetchone()       
-            cursor.execute(""" INSERT INTO user_personal_data ( idUsers, fullName, fullAddress, phone, city ) 
-                            VALUES ('{0}', '{1}', '{2}', '{3}', '{4}') """
-                            .format( data[0], fullname, fulladdress, phone, city ))                
-            connect.commit()
-            cursor.close()
-            connect.close()
-            gc.collect()
-    except Exception as e:
-        # flash(e)
-        pass
-    return render_template( 'checkout.html', username = username, form = form )
+    cursor, connect = connection() 
+    personal_data = cursor.execute(""" SELECT user_personal_data.fullName, user_personal_data.fullAddress, user_personal_data.phone, user_personal_data.city
+                             FROM user_personal_data 
+                             LEFT JOIN users 
+                             ON users.idUsers=user_personal_data.idUsers 
+                             WHERE users.username = '{}' """.format( username ))
+    personal_data = cursor.fetchall()
+    if personal_data:
+       form.fullname.data = personal_data[0][0] 
+       form.fulladdress.data = personal_data[0][1]
+       form.phone.data = personal_data[0][2]
+       form.city.data = personal_data[0][3]
+    else:
+        try:
+            if request.method == "POST" and form.validate():
+                fullname = form.fullname.data
+                fulladdress = form.fulladdress.data
+                phone = form.phone.data  # must be number!!!!!!!!!! form.validate()
+                city = form.city.data
+                cursor, connect = connection()           
+                data = cursor.execute("""SELECT * FROM users WHERE username = '{}'""".format( username )) 
+                data = cursor.fetchone()       
+                cursor.execute(""" INSERT INTO user_personal_data ( idUsers, fullName, fullAddress, phone, city ) 
+                                VALUES ('{0}', '{1}', '{2}', '{3}', '{4}') """
+                                .format( data[0], fullname, fulladdress, phone, city ))              
+                connect.commit()
+                cursor.close()
+                connect.close()
+                gc.collect()
+        except Exception as e:
+            # flash(e)
+            pass
+    return render_template( 'checkout.html', username = username, form = form, personal_data=personal_data )
 
-@mod.route( '/add-cart/', methods= ['POST'] )
-def add_cart():
-    return json.dumps( { 'error':0, 'post':request.form['post'] } )
+# @mod.route( '/add-cart/', methods= ['POST'] )
+# def add_cart():
+#     return json.dumps( { 'error':0, 'post':request.form['post'] } )
     
 
-@mod.route( '/cart/' )
+@mod.route( '/cart/', methods=['GET', 'POST'] )
 def cart():
-    return render_template( 'shoping_cart.html' )
+    username = ""
+    if 'logged_in' in session:
+        username = session['username']
+    return render_template( 'shoping_cart.html', username = username )
 
 
 @mod.route('/login/', methods=['GET', 'POST'])
@@ -139,7 +153,6 @@ def login():
                     error = "Invalid credentials, try again!"
             else:
                 error = "Invalid credentials, try again!"
-
     except Exception as e:
         # flash(e)
         pass
@@ -184,7 +197,6 @@ def signup():
 @login_required
 def logout():
     session.clear()
-    #session.pop('logged_in', None)
     flash("You have been logged out!")
     gc.collect()
     return redirect(url_for("site.homepage"))

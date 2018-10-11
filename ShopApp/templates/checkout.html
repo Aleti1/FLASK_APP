@@ -1,27 +1,175 @@
 {% extends 'header.html' %}
 {% block body %}
-<body>
-	<div class="container">
+<body style="background-color:rgb(204, 246, 243)">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+	<div class="container" style="background-color:rgba(204, 246, 243)">
 		<br>
 		<br>
-		<h4>Checkout details </h4>
+		<h1>Checkout details </h1>
 		<br>
+		<div>
+			<h2>Delivery method</h2>
+		</div>
+		<!-- if1 (session"logged_in")  '[if2(data) >SHOW data in fields<  endif2]'  endif1 -->
 		{% from "form_helper.html" import render_field  %}
-		<form method="POST" action="">
+		<form method="POST" action="" class="form-helper">
 			<dl>
-				{{ render_field ( form.fullname    )}}
-				{{ render_field ( form.fulladdress )}}
-				{{ render_field ( form.phone   	   )}}
-				{{ render_field ( form.city 	   )}}
+				{{ render_field ( form.fullname, id_="fullname", style="background-color:rgb(204, 246, 243)" )}}
+				{{ render_field ( form.fulladdress, id_="fulladdress", style="background-color:rgb(204, 246, 243)"  )}}
+				{{ render_field ( form.phone, id_="phone", style="background-color:rgb(204, 246, 243)"  )}}
+				{{ render_field ( form.city, id_="city", style="background-color:rgb(204, 246, 243)" )}}
 			</dl>
-			<p><input class="btn btn-default" type="submit" value="Register"></p>
+			<div style="display: inline">
+				{% if personal_data %}
+				<p><input onclick="save_data()" class="btn btn-default" type="submit" value="Register" disabled></p>
+				{% else %}
+				<p><input onclick="save_data()" class="btn btn-default" type="submit" value="Register"></p>
+				{% endif %}
+				<p><input onclick="modify_data()" class="btn btn-default" value="Modify"></p>
+			</div>
 		</form>
+		<div>
+			<button onclick="save_data()">setItem {{username}}</button>
+			<button onclick="get_data()">getItem</button>
+		</div>
 		{% if error %}
 			<p class="error"><strong>Error:</strong>{{ error }}</p>
 		{% endif %}
 	</div>
+	<div>
+		<h2>Billing data</h2>
+		<div style="background-color:rgb(204, 246, 243)">
+			<h5>I've picked up billing data from last order:</h5>
+			<div>
+				<p id="name-phone">?????</p>
+				<p id="address-city">?????</p>
+			</div>
+			<div>
+				<p><input onclick="modify_data()" class="btn btn-default" value="Modify"></p>
+			</div>
+		</div>
+	</div>
+	<div>
+		<h2>Payment method</h2>
+	</div>
+	<div class="payment-method">
+		<ul>
+			<div><input id="credit-or-debit-card" type="radio" name="card" > Credit or debit card<br>
+				<p id="credit-or-debit-card-selected"></p>
+				<div class="credit_card_right"><img src="{{ url_for('static', filename='images/credit_cards3.jpg') }}" alt="_|_">
+				</div>
+			</div>
+			<div><input id="cash-to-courier" type="radio" name="cash"> Cash to courier<br>
+				<p id="cash-to-courier-selected"></p>
+			</div>
+			<div><input id="payment-order" type="radio" name="po"> Payment order<br>
+				<p id="payment-order-selected"></p>
+			</div>
+		</ul>
+	</div>
+	<div>
+		<div class="emg-row">
+			<div class="order-summary-text emg-col5">
+				<div class="cart-widget-title"><h4>Order details</h4></div>
+				<div class="summary-line">
+					<span class="emg-left">Product cost:</span>
+					<span class="emg-right order-summary-items-price">
+						<span id="total-product-cost">?????</span>
+							<sup class="money-decimal">00</sup> 
+						<span class="money-currency">$</span>
+					</span>
+					<div class="emg-clear"></div>
+				</div>
+				<div class="summary-line">
+					<span class="emg-left">Delivery cost:</span>
+						<span class="emg-right order-summary-shipping-cost">
+							<strong id="total-cost-delivery">FREE</strong>
+						</span>
+					<div class="emg-clear"></div>
+				</div>
+			</div>
+			<div class="order-summary-total emg-col3 emg-right">
+				<div class="title">Total:</div>
+				<p class="price order-summary-total-price">
+					<span id="total-delivery-cost-plus-products">2.023</span>
+						<sup class="money-decimal">00</sup> 
+					<span class="money-currency">$</span>
+				</p>
+				<button type="submit" class="emg-button gtm_stj738bt emg-btn-large emg-btn-full">
+					<div class="emg-btn-icon emg-btn-icon-large gtm_stj738bt">
+						<span class="icon-i19-forward gtm_stj738bt"></span>
+					</div>Next step</button>
+			</div>
+		</div>
+	</div>
 </body>
 <script>
-    
+	function total_cost_cart() {
+		var totalCostProduct = JS_shoppingCart.totalCart();
+		var totalCostDelivery = document.getElementById('total-cost-delivery').innerHTML;
+		if (totalCostDelivery == 'FREE'){
+			totalCostDelivery = 0;
+		}
+		var totalCost = Number(+totalCostProduct + +totalCostDelivery);
+		$( "#total-delivery-cost-plus-products" ).html( totalCost );
+	}
+	total_cost_cart();
+		
+	function save_data() {
+		var fullname = document.getElementById("fullname").value;
+		var fulladdress = document.getElementById("fulladdress").value;
+		var phone = document.getElementById("phone").value;
+		var city = document.getElementById("city").value;
+		var personalData = [];
+		personalData.push( fullname, fulladdress, phone, city );
+		window.localStorage.setItem('order-details', JSON.stringify( personalData ));
+		
+	};
+
+	function modify_data() {
+		document.getElementById("fullname").value = "";
+		document.getElementById("fulladdress").value = "";
+		document.getElementById("phone").value = "";
+		document.getElementById("city").value = "";
+	};
+
+	$(window).on('load' , function () {
+		var saved_data_fullname = document.getElementById("fullname").value;
+		var saved_data_fulladdress = document.getElementById("fulladdress").value;
+		var saved_data_phone = document.getElementById("phone").value;
+		var saved_data_city = document.getElementById("city").value;
+		$( "#name-phone" ).html( saved_data_fullname + " - " + saved_data_phone );
+		$("#address-city").html( saved_data_fulladdress + " - " + saved_data_city );
+	});
+
+	$('#credit-or-debit-card, #cash-to-courier, #payment-order').click(function () {
+		if (this.id == 'credit-or-debit-card') {
+			$("#credit-or-debit-card-selected").html("You will pay with the card as soon as you send the order.");
+			$("#cash-to-courier-selected").html("");
+			$("#payment-order-selected").html("");
+			document.getElementById('cash-to-courier').checked = false;
+			document.getElementById('payment-order').checked = false;
+		}
+		if (this.id == 'cash-to-courier') {
+			$("#cash-to-courier-selected").html("You will pay when the order is delivered.");
+			$("#credit-or-debit-card-selected").html("");
+			$("#payment-order-selected").html("");
+			document.getElementById('credit-or-debit-card').checked = false;
+			document.getElementById('payment-order').checked = false;
+		}
+		if (this.id == 'payment-order') {
+			$("#payment-order-selected").html("After placing the order, you will receive the invoice by email with all payment details.");
+			$("#cash-to-courier-selected").html("");
+			$("#credit-or-debit-card-selected").html("");
+			document.getElementById('cash-to-courier').checked = false;
+			document.getElementById('credit-or-debit-card').checked = false;
+		}
+	});
+
+	$( "#total-product-cost" ).html( JS_shoppingCart.totalCart() );
+
+	// if all fields are corect "next-step" button works
+
+
 </script>
 {% endblock %}

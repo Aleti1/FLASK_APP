@@ -29,15 +29,16 @@ var JS_shoppingCart = (function(){
         this.name = name
         this.price = price
         this.count = count
-    };
+        this.total = 0.00
+    }
 
     function saveCart() {
         localStorage.setItem( "ShopingCart", JSON.stringify( obj.listCart() ));
-    };
+    }
         
     function loadCart() {
-        cart = JSON.parse(localStorage.getItem( "ShopingCart" ));
-    };
+        cart = 'ShopingCart' in localStorage ? JSON.parse(localStorage.getItem( "ShopingCart" )) : [];
+    }
     
     loadCart();
 
@@ -46,20 +47,23 @@ var JS_shoppingCart = (function(){
 
     var obj = {};
     obj.addItemToCart = function( idProduct, name, price, count ) {
-        for ( var i in cart ) {
+
+        for ( var i = 0; i < cart.length; i++ ) {
             if(cart[i].idProduct == idProduct) {
                 cart[i].count += count;
                 saveCart();
                 return;
-            };
-        };
+            }
+        }
+
+
         var item = new Item( idProduct, name, price, count );
         cart.push(item);
         saveCart();
     };
 
     obj.setCountForItem = function( idProduct, count ) {
-        for ( var i in cart ) { 
+        for ( var i = 0; i < cart.length; i++ ) { 
             if( cart[i].idProduct == idProduct ) {
                 cart[i].count = count;
                 break;
@@ -69,7 +73,7 @@ var JS_shoppingCart = (function(){
     };
 
     obj.removeItemFromCart = function( idProduct ) {
-        for ( var i in cart ) {
+        for ( var i = 0; i < cart.length; i++ ) {
             if( cart[i].idProduct == idProduct ) {
                 cart[i].count -= 1;
                 if(cart[i].count == 0) {
@@ -82,11 +86,11 @@ var JS_shoppingCart = (function(){
     };
 
     obj.removeAll = function(idProduct) {
-        for (var i in cart) {
-            if(cart[i].idProduct == idProduct) {
-                cart.splice(i, 1);  
+        for ( var i = 0; i < cart.length; i++ ) {
+            if( cart[i].idProduct == idProduct ) {
+                cart.splice(i, 1);
+                break;  
             }
-            break;
         }
         saveCart();
     }; 
@@ -98,7 +102,7 @@ var JS_shoppingCart = (function(){
     
     obj.countCart = function(){
         var total_count = 0
-        for (var i in cart) {
+        for ( var i = 0; i < cart.length; i++ ) {
             total_count += cart[i].count;
         }
         return total_count;
@@ -107,7 +111,7 @@ var JS_shoppingCart = (function(){
     obj.totalCart = function() {
         total_cost = 0;
         costPerProduct = 0;
-        for (var i in cart) {
+        for ( var i = 0; i < cart.length; i++ ) {
             if(cart[i].idProduct) {
                 costPerProduct = cart[i].price * cart[i].count;
             }
@@ -118,10 +122,10 @@ var JS_shoppingCart = (function(){
 
     obj.listCart = function() {
         var cartCopy = [];
-        for( var i in cart) {
+        for( var i = 0; i < cart.length; i++ ) {
             var item = cart[i];
             var itemCopy = {};
-            for (var x in item ) {
+            for ( var x = 0; x < item.length; x++ ) {
                 itemCopy[x] = item[x];
             }
             itemCopy.total = (item.price * item.count).toFixed(2);
@@ -130,7 +134,6 @@ var JS_shoppingCart = (function(){
         return cartCopy;
     }; 
 
-    
     return obj;
 })();
 

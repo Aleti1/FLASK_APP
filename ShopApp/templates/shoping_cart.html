@@ -4,7 +4,7 @@
     
 
 
-<h1>SHOPING CART</h1>
+<h1>SHOPING CART </h1>
 <div>
     <p>PRINDEL</p>  
 </div>
@@ -23,7 +23,7 @@
 
 
 <script>
-    $(".add-to-cart").click(function(event) {
+    $(".add-to-cart").click(function( event ) {
         event.preventDefault();
         var idProduct = Number($(this).attr("data-idProduct"));
         var name = $(this).attr("data-name");
@@ -40,6 +40,7 @@
     
 
     function displayCart() {
+
         var cartArray = JS_shoppingCart.listCart();
         var output = "";
         for( var i in cartArray) {
@@ -49,15 +50,25 @@
                     + cartArray[i].price 
                     + " x "                    
                     + " "
-                    + " <input class='item-count' type='number' data-name='" + cartArray[i].idProduct + "' value='" + cartArray[i].count + "'> " 
+                    + " <input class='item-count' type='number' data-name='" 
+                    + cartArray[i].idProduct 
+                    + "' value='" 
+                    + cartArray[i].count 
+                    + "'> " 
                     + " "
                     + " "
                     + " = " 
                     + cartArray[i].total 
                     + " "
-                    + "<button class='subtract-item' data-name='" + cartArray[i].idProduct + "'>-</button>"
-                    + "<button class='plus-item'     data-name='" + cartArray[i].idProduct + "'>+</button>"
-                    + "<button class='delete-item'   data-name='" + cartArray[i].idProduct + "'>X</button>"
+                    + "<button class='subtract-item' data-name='" 
+                    + cartArray[i].idProduct 
+                    + "'>-</button>"
+                    + "<button class='plus-item'     data-name='" 
+                    + cartArray[i].idProduct 
+                    + "'>+</button>"
+                    + "<button class='delete-item'   data-name='" 
+                    + cartArray[i].idProduct 
+                    + "'>X</button>"
                     + "</li>";
         }
         $( "#show-cart" ).html( output );
@@ -91,8 +102,15 @@
     });
 
     $( "#next-step" ).click( function( event ) {
-        window.location.href = "/nextstep";
-        displayCart();
+        var username = '{{ username }}';
+        if ( username != "" )  {
+            window.location.href = "/checkout";
+            displayCart();
+        } else {
+            window.location.href = "/nextstep";
+            displayCart();
+        };
+        
     });
 
 
