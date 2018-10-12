@@ -87,7 +87,7 @@
     }
     
     function add_to_cart(action){
-        var idProduct = Number($(action).attr("data-idproduct"));
+        var idProduct = Number($(action).attr("data-idProduct"));
         var name = $(action).attr("data-name");
         var price = Number($(action).attr("data-price"));
         JS_shoppingCart.addItemToCart(idProduct, name, price, 1);

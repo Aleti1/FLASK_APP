@@ -125,7 +125,7 @@ var JS_shoppingCart = (function(){
         for( var i = 0; i < cart.length; i++ ) {
             var item = cart[i];
             var itemCopy = {};
-            for ( var x = 0; x < item.length; x++ ) {
+            for ( var x in item ) {
                 itemCopy[x] = item[x];
             }
             itemCopy.total = (item.price * item.count).toFixed(2);
