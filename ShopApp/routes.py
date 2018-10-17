@@ -27,6 +27,10 @@ def login_required(f):
 def homepage():
     return render_template( 'homepage.html' )
 
+@mod.route( '/final-step/' )
+def final_step():
+    return render_template( 'final_step.html' )
+
 
 @mod.route( '/products/' )
 def products():
@@ -84,7 +88,7 @@ def passwordstep(email_addr):
 def checkout():
     form = Checkout(request.form)
     username = session['username']
-    cursor, connect = connection() 
+    cursor, connect = connection()
     personal_data = cursor.execute(""" SELECT user_personal_data.fullName, user_personal_data.fullAddress, user_personal_data.phone, user_personal_data.city
                              FROM user_personal_data 
                              LEFT JOIN users 
@@ -200,3 +204,5 @@ def logout():
     flash("You have been logged out!")
     gc.collect()
     return redirect(url_for("site.homepage"))
+
+

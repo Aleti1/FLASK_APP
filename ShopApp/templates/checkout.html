@@ -21,11 +21,10 @@
 			</dl>
 			<div style="display: inline">
 				{% if personal_data %}
-				<p><input onclick="save_data()" class="btn btn-default" type="submit" value="Register" disabled></p>
+				<p><input onclick="modify_data()" class="btn btn-default" type="submit" value="Modify" id="is-data-but-modify"></p>
 				{% else %}
 				<p><input onclick="save_data()" class="btn btn-default" type="submit" value="Register"></p>
 				{% endif %}
-				<p><input onclick="modify_data()" class="btn btn-default" value="Modify"></p>
 			</div>
 		</form>
 		<div>
@@ -95,80 +94,107 @@
 						<sup class="money-decimal">00</sup> 
 					<span class="money-currency">$</span>
 				</p>
-				<button type="submit" class="emg-button gtm_stj738bt emg-btn-large emg-btn-full">
-					<div class="emg-btn-icon emg-btn-icon-large gtm_stj738bt">
-						<span class="icon-i19-forward gtm_stj738bt"></span>
-					</div>Next step</button>
+				<p><input onclick="confirm_order_and_pay()" class="btn btn-default" id="final-step" value="Final step" disabled></p>
 			</div>
 		</div>
 	</div>
 </body>
 <script>
+
+	var credit_or_debit_card = true;
+
+
 	function total_cost_cart() {
 		var totalCostProduct = JS_shoppingCart.totalCart();
-		var totalCostDelivery = document.getElementById('total-cost-delivery').innerHTML;
+		var totalCostDelivery = document.getElementById( 'total-cost-delivery' ).innerHTML;
 		if (totalCostDelivery == 'FREE'){
 			totalCostDelivery = 0;
 		}
-		var totalCost = Number(+totalCostProduct + +totalCostDelivery);
+		var totalCost = Number( +totalCostProduct + +totalCostDelivery );
 		$( "#total-delivery-cost-plus-products" ).html( totalCost );
 	}
 	total_cost_cart();
 		
 	function save_data() {
-		var fullname = document.getElementById("fullname").value;
-		var fulladdress = document.getElementById("fulladdress").value;
-		var phone = document.getElementById("phone").value;
-		var city = document.getElementById("city").value;
+		var fullname = document.getElementById( "fullname" ).value;
+		var fulladdress = document.getElementById( "fulladdress" ).value;
+		var phone = document.getElementById( "phone" ).value;
+		var city = document.getElementById( "city" ).value;
 		var personalData = [];
 		personalData.push( fullname, fulladdress, phone, city );
-		window.localStorage.setItem('order-details', JSON.stringify( personalData ));
+		window.localStorage.setItem( 'order-details', JSON.stringify( personalData ));
 		
 	};
 
 	function modify_data() {
-		document.getElementById("fullname").value = "";
-		document.getElementById("fulladdress").value = "";
-		document.getElementById("phone").value = "";
-		document.getElementById("city").value = "";
+		document.getElementById( "fullname" ).value = "";
+		document.getElementById( "fulladdress" ).value = "";
+		document.getElementById( "phone" ).value = "";
+		document.getElementById( "city" ).value = "";
+		// $( '#is-data-but-modify' ).val() = "Register";
+		
 	};
-
+	
 	$(window).on('load' , function () {
-		var saved_data_fullname = document.getElementById("fullname").value;
-		var saved_data_fulladdress = document.getElementById("fulladdress").value;
-		var saved_data_phone = document.getElementById("phone").value;
-		var saved_data_city = document.getElementById("city").value;
+		var saved_data_fullname = document.getElementById( "fullname" ).value;
+		var saved_data_fulladdress = document.getElementById( "fulladdress" ).value;
+		var saved_data_phone = document.getElementById( "phone" ).value;
+		var saved_data_city = document.getElementById( "city" ).value;
 		$( "#name-phone" ).html( saved_data_fullname + " - " + saved_data_phone );
 		$("#address-city").html( saved_data_fulladdress + " - " + saved_data_city );
 	});
 
-	$('#credit-or-debit-card, #cash-to-courier, #payment-order').click(function () {
-		if (this.id == 'credit-or-debit-card') {
-			$("#credit-or-debit-card-selected").html("You will pay with the card as soon as you send the order.");
-			$("#cash-to-courier-selected").html("");
-			$("#payment-order-selected").html("");
-			document.getElementById('cash-to-courier').checked = false;
-			document.getElementById('payment-order').checked = false;
+	(function payment_checked_all_done() {
+	$( '#credit-or-debit-card, #cash-to-courier, #payment-order' ).click(function () {
+		if ( this.id == 'credit-or-debit-card' ) {
+			$( "#credit-or-debit-card-selected" ).html( "You will pay with the card as soon as you send the order." );
+			$( "#cash-to-courier-selected" ).html("");
+			$( "#payment-order-selected" ).html("");
+			document.getElementById( 'cash-to-courier' ).checked = false;
+			document.getElementById( 'payment-order' ).checked = false;
+			if ( document.getElementById( "credit-or-debit-card" ).checked){
+				credit_or_debit_card = false;
+			}
+			final_step();
 		}
-		if (this.id == 'cash-to-courier') {
-			$("#cash-to-courier-selected").html("You will pay when the order is delivered.");
-			$("#credit-or-debit-card-selected").html("");
-			$("#payment-order-selected").html("");
-			document.getElementById('credit-or-debit-card').checked = false;
-			document.getElementById('payment-order').checked = false;
+		if ( this.id == 'cash-to-courier' ) {
+			$( "#cash-to-courier-selected" ).html( "You will pay when the order is delivered." );
+			$( "#credit-or-debit-card-selected" ).html("");
+			$( "#payment-order-selected" ).html("");
+			document.getElementById( 'credit-or-debit-card' ).checked = false;
+			document.getElementById( 'payment-order' ).checked = false;
+			if ( document.getElementById( "cash-to-courier" ).checked){
+				credit_or_debit_card = false;
+			}
+			final_step();
 		}
-		if (this.id == 'payment-order') {
-			$("#payment-order-selected").html("After placing the order, you will receive the invoice by email with all payment details.");
-			$("#cash-to-courier-selected").html("");
-			$("#credit-or-debit-card-selected").html("");
-			document.getElementById('cash-to-courier').checked = false;
-			document.getElementById('credit-or-debit-card').checked = false;
+		if ( this.id == 'payment-order' ) {
+			$( "#payment-order-selected" ).html( "After placing the order, you will receive the invoice by email with all payment details." );
+			$( "#cash-to-courier-selected" ).html("");
+			$( "#credit-or-debit-card-selected" ).html("");
+			document.getElementById( 'cash-to-courier' ).checked = false;
+			document.getElementById( 'credit-or-debit-card' ).checked = false;
+			if ( document.getElementById( "payment-order" ).checked) {
+				credit_or_debit_card = false;
+			}
+			final_step();
 		}
 	});
+	})();
+		
 
 	$( "#total-product-cost" ).html( JS_shoppingCart.totalCart() );
 
 	// if all fields are corect "next-step" button works
+		
+	function final_step() {
+			$( "#final-step" ).prop( 'disabled', credit_or_debit_card );
+	};
+
+	function confirm_order_and_pay() {
+		window.location.href = "/final-step";
+	}
+	
 
 
 </script>
