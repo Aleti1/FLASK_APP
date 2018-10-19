@@ -9,9 +9,22 @@ import gc
 from .dbconnect import connection
 from .registration_form import *
 from .checkout import *
+import json
+
 mod = Blueprint( 'site', __name__ )
+messages  = open( 'ShopApp/static/messages.json' ).read()
+messages  = json.loads( messages ) if messages else False
 
 products = ""
+
+def get_message( ms, field = None, lang = 'RO' ):
+    if lang in messages and  ms in messages[lang]:
+        if field:
+            return messages[lang][ms].replace( '{field}', field )
+        else:
+            return messages[lang][ms]
+    return False
+
 def login_required(f):
     @wraps(f)
     def wrap( *args, **kwargs ):
@@ -120,11 +133,42 @@ def checkout():
         except Exception as e:
             # flash(e)
             pass
-    return render_template( 'checkout.html', username = username, form = form, personal_data=personal_data )
+    return render_template( 'checkout.html', username = username, form = form, personal_data = personal_data )
 
-# @mod.route( '/add-cart/', methods= ['POST'] )
-# def add_cart():
-#     return json.dumps( { 'error':0, 'post':request.form['post'] } )
+# @mod.route( '/validation', methods=['POST'] )
+# def validation():
+#     errors, values = {}, {}
+#     if 'Full Name' in request.form and len( request.form['Full Name'] ) > 0:
+#         values['Full Name'] = request.form['Full Name']
+#     else:
+#         errors['Full Name'] = get_message( 'dn', 'Full Name' )
+#     if 'Full Adress' in request.form and len( request.form['Full Adress'] ) > 0:
+#         values['Full Adress'] = request.form['Full Adress']
+#     else:
+#         errors['Full Adress'] = get_message( 'dn', 'Full Adress' )
+#     if 'Phone Number' in request.form and len( request.form['Phone Number'] ) > 0:
+#         values['Phone Number'] = request.form['Phone Number']
+#     else:
+#         errors['Phone Number'] = get_message( 'dn', 'Phone Number' )
+#     if 'City' in request.form and len( request.form['City'] ) > 0:
+#         values['City'] = request.form['City']
+#     else:
+#         errors['City'] = get_message( 'dn', 'City' )
+#     if errors:
+#         return json.dumps( { 'error':2, 'errors':errors } )
+#     else:
+#         return json.dumps( { 'error':0, 'message':'Datele sunt corecte' } )
+
+@mod.route('/processs', methods=['POST'])
+def processs():
+    username = request.form['username']
+    email = request.form['email']
+    password = request.form['Password']
+    confirm = request.form['Repeat Password']
+    if username and email:
+        newName = username[::-1]
+        return jsonify({'username' : newName})
+    return jsonify({'error' : 'Missing Data!'})
     
 
 @mod.route( '/cart/', methods=['GET', 'POST'] )
@@ -162,7 +206,7 @@ def login():
         pass
     cursor.close()
     gc.collect()
-    return render_template("login.html", error = error)
+    return render_template( "login.html", error = error )
 
 
 @mod.route( '/signup/', methods=['POST', 'GET'] )
@@ -190,11 +234,11 @@ def signup():
                 gc.collect()
                 session["logged_in"] = True
                 session["username"] = username
-                return redirect(url_for(".homepage"))
+                return redirect( url_for(".homepage") )
     except Exception as e:
         # flash(e)
         pass
-    return render_template("signup.html", form = form) 
+    return render_template( "signup.html", form = form ) 
 
 
 @mod.route('/logout/')

@@ -12,12 +12,12 @@
 		</div>
 		<!-- if1 (session"logged_in")  '[if2(data) >SHOW data in fields<  endif2]'  endif1 -->
 		{% from "form_helper.html" import render_field  %}
-		<form method="POST" action="" class="form-helper">
+		<form data-method="POST" data-action="validation" data-function="response" class="form-helper">
 			<dl>
-				{{ render_field ( form.fullname, id_="fullname", style="background-color:rgb(204, 246, 243)" )}}
-				{{ render_field ( form.fulladdress, id_="fulladdress", style="background-color:rgb(204, 246, 243)"  )}}
-				{{ render_field ( form.phone, id_="phone", style="background-color:rgb(204, 246, 243)"  )}}
-				{{ render_field ( form.city, id_="city", style="background-color:rgb(204, 246, 243)" )}}
+				{{ render_field ( form.fullname, id_="fullname", style="background-color:rgb(204, 246, 243)", type="filed-datas" )}}
+				{{ render_field ( form.fulladdress, id_="fulladdress", style="background-color:rgb(204, 246, 243)", type="filed-datas"  )}}
+				{{ render_field ( form.phone, id_="phone", style="background-color:rgb(204, 246, 243)", type="filed-datas"  )}}
+				{{ render_field ( form.city, id_="city", style="background-color:rgb(204, 246, 243)", type="filed-datas" )}}
 			</dl>
 			<div style="display: inline">
 				{% if personal_data %}
@@ -107,7 +107,7 @@
 	function total_cost_cart() {
 		var totalCostProduct = JS_shoppingCart.totalCart();
 		var totalCostDelivery = document.getElementById( 'total-cost-delivery' ).innerHTML;
-		if (totalCostDelivery == 'FREE'){
+		if ( totalCostDelivery == 'FREE' ) {
 			totalCostDelivery = 0;
 		}
 		var totalCost = Number( +totalCostProduct + +totalCostDelivery );
@@ -122,9 +122,9 @@
 		var city = document.getElementById( "city" ).value;
 		var personalData = [];
 		personalData.push( fullname, fulladdress, phone, city );
-		window.localStorage.setItem( 'order-details', JSON.stringify( personalData ));
-		
+		window.localStorage.setItem( 'Order-details', JSON.stringify( personalData ));
 	};
+		
 
 	function modify_data() {
 		document.getElementById( "fullname" ).value = "";
@@ -186,6 +186,17 @@
 	$( "#total-product-cost" ).html( JS_shoppingCart.totalCart() );
 
 	// if all fields are corect "next-step" button works
+
+
+	function form_field_is_not_empty() {
+		var empty = false; 
+		$( 'input[type="filed-datas"]' ).each( function() {
+   			if( $( this ).val() === "" ){
+      		empty = true;
+      		return true;
+    		}
+ 		});
+	}
 		
 	function final_step() {
 			$( "#final-step" ).prop( 'disabled', credit_or_debit_card );
@@ -194,8 +205,58 @@
 	function confirm_order_and_pay() {
 		window.location.href = "/final-step";
 	}
-	
 
+	form_field_is_not_empty();
+	// var results = form_field_is_not_empty()
+	// console.log(results);
+
+function form_submit( action ){
+    var form = $(action).closest('form'),
+        link = $(form).data('action'),
+        method = $(form).data('method'),
+        func = $(form).data('function'),
+        post = new FormData(form[0]),
+        message = $(form).find('.message'),
+        input = '.input',
+        input_message = '.input-message',
+        base_url = window.location.origin = window.location.protocol+'//'+window.location.host;
+        link = base_url+'/'+link;
+
+    $(message).html('');
+    $(form).find(input_message).html('');
+
+    $.ajax({
+        type: method,
+        url: link,
+        data: post,
+        success: function(response){
+            response = JSON.parse(response);
+            if(response.error == 0){
+                if(func in window){
+                    window[func](action, response);
+                }
+                if('message' in response){
+                    $(message).html(response.message); 
+                }
+            } else if(response.error == 1){
+                window.location.href = base_url;
+            } else if(response.error == 2){
+                $.each(response.errors, function(k){
+                    $(form).find('input[name="'+k+'"]').closest(input).find(input_message).html(response.errors[k]);
+                });  
+            } else if(response.error == 3){
+                if(func in window){
+                    window[func](action, response);
+                }
+                $(message).html(respone.message);
+            }
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+
+}
 
 </script>
 {% endblock %}

@@ -31,18 +31,18 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
 </head>
 <header>
-    <div class="topnav">
+    <div class="topnav" style=" align-items:center; display:flex; justify-content: center ">
         {%  if session.logged_in  %}
-        <a class="active" href="/"><button type="button" class="btn btn-default">Home</button></a>
-        <a href="/logout/"><button type="button" class="btn btn-default">Logout</button></a>
-        <a href="/dashboard/"><button type="button" class="btn btn-default">Dashboard</button></a>
-        <a href="/js_form/"><button type="button" class="btn btn-default">Async Form!</button></a>
+        <a class="active" href="/"><button type="button" class="btn btn-default">Home</button></a>&nbsp;
+        <a href="/logout/"><button type="button" class="btn btn-default">Logout</button></a>&nbsp;
+        <a href="/dashboard/"><button type="button" class="btn btn-default">Dashboard</button></a>&nbsp;
+        <a href="/js_form/"><button type="button" class="btn btn-default">Async Form!</button></a>&nbsp;
         <a href="/cart/"><button type="button" class="btn btn-default">Cart&nbsp;&nbsp;&nbsp;<span class="badge" id="cart-butt">0</span></button></a>
         {%  else  %}
-        <a class="active" href="/"><button type="button" class="btn btn-default">Home</button></a>
-        <a href="/login/"><button type="button" class="btn btn-default">Log In</button></a>
-        <a href="/signup/"><button type="button" class="btn btn-default">Sign Up</button></a>
-        <a href="/dashboard/"><button type="button" class="btn btn-default">Dashboard</button></a>
+        <a class="active" href="/"><button type="button" class="btn btn-default">Home</button></a>&nbsp;
+        <a href="/login/"><button type="button" class="btn btn-default">Log In</button></a>&nbsp;
+        <a href="/signup/"><button type="button" class="btn btn-default">Sign Up</button></a>&nbsp;
+        <a href="/dashboard/"><button type="button" class="btn btn-default">Dashboard</button></a>&nbsp;
         <a href="/cart/"><button type="button" class="btn btn-default">Cart&nbsp;&nbsp;&nbsp;<span class="badge" id="cart-butt">0</span></button></a>    
         {%  endif  %}
     </div>

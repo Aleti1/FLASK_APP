@@ -7,19 +7,54 @@
 		<h4>Register</h4>
 		<br>
 		{% from "form_helper.html" import render_field  %}
-		<form method="POST" action="/signup/">
+		<form id="form" action="/signup/" data-action="processs" data-method="POST" data-function="response">
 			<dl>
-				{{ render_field ( form.username   )}}
-				{{ render_field ( form.email      )}}
-				{{ render_field ( form.password   )}}
-				{{ render_field ( form.confirm    )}}
-				{{ render_field ( form.accept_tos )}}
+				{{ render_field ( form.username ,id_="username"  )}}
+				{{ render_field ( form.email ,id_="email"        )}}
+				{{ render_field ( form.password ,id_="password"  )}}
+				{{ render_field ( form.confirm ,id_="confirm"    )}}
+				{{ render_field ( form.accept_tos ,id_="acceptos")}}
 			</dl>
-			<p><input class="btn btn-default" type="submit" value="Register"></p>
+			<p><input class="btn btn-default" type="submit" value="Register" onclick="javascript:async_form( this )"></p>
 		</form>
+		<br>
+		<div id="succesAlert" class="alert alert-succes" role="alert" style="display:none;"></div>
+		<div id="errorAlert" class="alert alert-danger" role="alert" style="display:none;"></div>
 		{% if error %}
 			<p class="error"><strong>Error:</strong>{{ error }}</p>
 		{% endif %}
 	</div>
+
+	<script>
+	
+		function async_form( action ) {
+			var form = $(action).closest('form')
+				link = $(form).data('action'),
+				post = new FormData(form[0]),
+				method = $(form).data('method');
+			$('form').on('submit', function( event ) {
+				$.ajax({
+					data: post,
+					type : method,
+					url : link,
+				
+				success: function( data ) {
+					if ( data.error ) {
+						$('#errorAlert').text( data.error ).show();
+						$('#succesAlert').hide();
+					} else {
+						$('#succesAlert').text( data.name ).show();
+						$('#errorAlert').hide();
+					}
+				},
+				cache: false,
+				contentType: false,
+				processData: false
+				});
+			});
+		};
+	
+
+	</script>
 </body>
 {% endblock %}

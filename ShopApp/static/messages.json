@@ -1,0 +1,33 @@
+{"RO": {
+    "dn": "Datele din campul {field} nu au fost completate!",
+    "di": "Datele adaugate in campul {field} nu sunt corecte!",
+    "dx": "Datele adaugate in campul {field} exista deja in sistem!",
+    "ch-not-allowed": "Campul {field} contine caractere care nu sunt permise!",
+    "one-error": "O eroare a avut loc in timpul acestei actiuni!",
+    "one-error-zone": "O eroare a avut loc in zona {field}!",
+    "one-error-find": "O eroare a avut loc in zona de identificare {field}!",
+    "data-none": "Nu exista date pentru aceasta zona!",
+    "data-exist": "Datele selectate exista deja in sistem!",
+    "send-data-success": "Datele au fost trimise cu succes!",
+    "send-data-none": "Datele nu au fost trimise. Va rugam sa reincercati!",
+    "add-data-success": "Datele au fost adaugate cu succes!",
+    "add-data-none": "Datele nu au fost adaugate!",
+    "update-data-success": "Datele au fost modificate cu succes!",
+    "update-data-none": "Datele nu au fost modificate!",
+    "remove-data-success": "Datele au fost eliminate cu succes!",
+    "remove-data-none": "Datele nu au fost eliminate!",
+    "email-notification": "Un email continand toate datele necesare pentru pasul urmator a fost trimis catre adresa asociata acestui cont. Va multumim!",
+    "email-is-used": "Exista deja un cont asociat cu acest email",
+    "action-success": "Actiunea a fost efectuata cu succes. Va multumim!",
+    "access-denied": "Acesul in acesta zona este interzis!",
+    "app-update": "Acesta aplicatie a suferit o modificare majora si pentru a functiona in parametrii corespunzatori este necesar instalarea componentelor adaugate sau modificate.Va rugam sa instalati aceste actualizari prin apasarea butonului de mai jos.<br/><br/>Va multumim.",
+    "maintenance-zone": "Aceasta zona este in mentenanta. Va multumim!",
+    "development-zone": "Aceasta zona este in dezvoltare. Va multumim!",
+    "custom": "{field}"
+
+    }
+    
+
+
+
+}

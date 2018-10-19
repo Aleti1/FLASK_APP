@@ -20,8 +20,11 @@
 
 var JS_shoppingCart = (function(){
 
-    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // private methods and properties:
+    // ==========================================
+    // ==========================================
+    // ===== private methods and properties =====
+    // ==========================================
+    // ==========================================
 
     var cart = [];
     function Item( idProduct, name, price, count ) {
@@ -42,12 +45,14 @@ var JS_shoppingCart = (function(){
     
     loadCart();
 
-    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // public methods and properties:
+    // =========================================
+    // =========================================
+    // ===== public methods and properties =====
+    // =========================================
+    // =========================================
 
     var obj = {};
     obj.addItemToCart = function( idProduct, name, price, count ) {
-
         for ( var i = 0; i < cart.length; i++ ) {
             if(cart[i].idProduct == idProduct) {
                 cart[i].count += count;
@@ -55,8 +60,6 @@ var JS_shoppingCart = (function(){
                 return;
             }
         }
-
-
         var item = new Item( idProduct, name, price, count );
         cart.push(item);
         saveCart();
@@ -122,7 +125,7 @@ var JS_shoppingCart = (function(){
 
     obj.listCart = function() {
         var cartCopy = [];
-        for( var i = 0; i < cart.length; i++ ) {
+        for( var i in cart ) {
             var item = cart[i];
             var itemCopy = {};
             for ( var x in item ) {
